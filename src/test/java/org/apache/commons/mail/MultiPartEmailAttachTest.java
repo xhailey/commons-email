@@ -517,4 +517,19 @@ public class MultiPartEmailAttachTest {
             e.printStackTrace();
         }
     }
+
+    // 1.30
+    @Test
+    public void validEmailAttachmentCanBeAttachedToEmailWith3PartInline() {
+        addPartsToEmails(3);
+        final File f;
+        try {
+            f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
+            email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
+            assertEquals(4, email.getContainer().getCount());
+        } catch (IOException | EmailException | MessagingException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
