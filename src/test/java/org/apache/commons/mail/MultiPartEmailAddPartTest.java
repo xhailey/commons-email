@@ -31,31 +31,38 @@ public class MultiPartEmailAddPartTest {
         }
     }
 
-    @Test
-    public void canAddTextPlainContentAtIndexZeroInEmailWith3Part() throws MessagingException {
-        addPartsToEmails(3);
-        MimeMultipart m = new MimeMultipart("text/plain");
-        MimeBodyPart plainTextPart = new MimeBodyPart();
-        plainTextPart.setContent("a", "text/plain");
-        m.addBodyPart(plainTextPart);
+    private void testAddPartWithIndex(String content, String contentType, int index, int expectedSize) {
         try {
-          email.addPart(m, 0);
-          assertEquals(4, email.getContainer().getCount());
+            MimeMultipart m = new MimeMultipart("subtype/123");
+            MimeBodyPart plainTextPart = new MimeBodyPart();
+            plainTextPart.setContent(content, contentType);
+            m.addBodyPart(plainTextPart);
 
-          MimeMultipart c = (MimeMultipart) email.getContainer().getBodyPart(0).getContent();
-          String addedContent  = (String) c.getBodyPart(0).getContent();
-          assertEquals("a", addedContent);
+            email.addPart(m, index);
+            assertEquals(expectedSize, email.getContainer().getCount());
 
-        } catch (EmailException | IOException e) {
+            MimeMultipart c = (MimeMultipart) email.getContainer().getBodyPart(index).getContent();
+            String addedContent  = (String) c.getBodyPart(0).getContent();
+            assertEquals(content, addedContent);
+
+        } catch (EmailException | IOException | MessagingException e) {
             fail("Should not fail");
             e.printStackTrace();
         }
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void addTextPlainContentAtIndexMinusOneInEmailWith3PartShouldFail() throws MessagingException {
+    // 2.1
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexZeroInEmailWith3Part() throws MessagingException {
         addPartsToEmails(3);
-        MimeMultipart m = new MimeMultipart("text/plain");
+        testAddPartWithIndex("a", "text/plain", 0, 4);
+    }
+
+    // 2.2
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void addTextPlainLenOneContentAtIndexMinusOneInEmailWith3PartShouldFail() throws MessagingException {
+        addPartsToEmails(3);
+        MimeMultipart m = new MimeMultipart("subtype/123");
         MimeBodyPart plainTextPart = new MimeBodyPart();
         plainTextPart.setContent("a", "text/plain");
         m.addBodyPart(plainTextPart);
@@ -64,5 +71,200 @@ public class MultiPartEmailAddPartTest {
         } catch (EmailException e) {
             e.printStackTrace();
         }
+    }
+
+    // 2.3
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("a", "text/plain", 1, 4);
+    }
+
+    // 2.4
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("a", "text/plain", 2, 4);
+    }
+
+    // 2.5
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexThreeInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("a", "text/plain", 3, 4);
+    }
+
+    // 2.6
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void addTextPlainLenOneContentAtIndexFiveInEmailWith3PartShouldFail() {
+        try {
+            addPartsToEmails(3);
+            MimeMultipart m = new MimeMultipart("subtype/123");
+            MimeBodyPart plainTextPart = new MimeBodyPart();
+            plainTextPart.setContent("a", "text/plain");
+            m.addBodyPart(plainTextPart);
+            email.addPart(m, 5);
+        } catch (EmailException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 2.7
+    @Test(expected = EmailException.class)
+    public void addNullLenOneContentAtIndexZeroInEmailWith3PartShouldFail() {
+        try {
+            addPartsToEmails(3);
+            MimeMultipart m = new MimeMultipart("subtype/123");
+            MimeBodyPart plainTextPart = new MimeBodyPart();
+            plainTextPart.setContent("a", null);
+            m.addBodyPart(plainTextPart);
+            email.addPart(m, 0);
+        } catch (EmailException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 2.8
+    @Test(expected = EmailException.class)
+    public void addEmptyLenOneContentAtIndexZeroInEmailWith3PartShouldFail() {
+        try {
+            addPartsToEmails(3);
+            MimeMultipart m = new MimeMultipart("subtype/123");
+            MimeBodyPart plainTextPart = new MimeBodyPart();
+            plainTextPart.setContent("a", "");
+            m.addBodyPart(plainTextPart);
+            email.addPart(m, 0);
+        } catch (EmailException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 2.9
+    @Test
+    public void canAddTextHtmlLenOneContentAtIndexZeroInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("a", "text/html", 0, 4);
+    }
+
+    // 2.10
+    @Test(expected = EmailException.class)
+    public void addRandomStringLenOneContentAtIndexZeroInEmailWith3PartShouldFail() {
+        try {
+            addPartsToEmails(3);
+            MimeMultipart m = new MimeMultipart("subtype/123");
+            MimeBodyPart plainTextPart = new MimeBodyPart();
+            plainTextPart.setContent("a", "xxx");
+            m.addBodyPart(plainTextPart);
+            email.addPart(m, 0);
+        } catch (EmailException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 2.11
+    @Test(expected = EmailException.class)
+    public void addTextPlainNullContentAtIndexZeroInEmailWith3PartShouldFail() {
+        try {
+            addPartsToEmails(3);
+            MimeMultipart m = new MimeMultipart("subtype/123");
+            MimeBodyPart plainTextPart = new MimeBodyPart();
+            plainTextPart.setContent(null, "text/plain");
+            m.addBodyPart(plainTextPart);
+            email.addPart(m, 0);
+        } catch (EmailException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 2.12
+    @Test
+    public void canAddTextPlainEmptyContentAtIndexZeroInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("", "text/plain", 0, 4);
+    }
+
+    // 2.13
+    @Test
+    public void canAddTextPlainLenTwoContentAtIndexZeroInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("ab", "text/plain", 0, 4);
+    }
+
+    // 2.14
+    @Test
+    public void canAddTextPlainMediumLenContentAtIndexZeroInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("To be, or not to be, that is the question", "text/plain", 0, 4);
+    }
+
+    // 2.15
+    @Test
+    public void canAddTextPlainVeryLongContentAtIndexZeroInEmailWith3Part() {
+        addPartsToEmails(3);
+        testAddPartWithIndex("To be, or not to be, that is the question:\n" +
+                "Whether 'tis nobler in the mind to suffer\n" +
+                "The slings and arrows of outrageous fortune,\n" +
+                "Or to take arms against a sea of troubles\n" +
+                "And by opposing end them. To die—to sleep,\n", "text/plain", 0, 4);
+    }
+
+    // 2.16
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexZeroInEmptyEmail() {
+        testAddPartWithIndex("a", "text/plain", 0, 1);
+    }
+
+    // 2.17
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexZeroInEmailWith1Part() {
+        addPartsToEmails(1);
+        testAddPartWithIndex("a", "text/plain", 0, 2);
+    }
+
+    // 2.18
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexZeroInEmailWith2Part() {
+        addPartsToEmails(2);
+        testAddPartWithIndex("a", "text/plain", 0, 3);
+    }
+
+    // 2.19
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void canAddTextPlainLenOneContentAtIndexOneInEmptyEmail() {
+        testAddPartWithIndex("a", "text/plain", 1, 1);
+    }
+
+    // 2.20
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith1Part() {
+        addPartsToEmails(1);
+        testAddPartWithIndex("a", "text/plain", 1, 2);
+    }
+
+    // 2.21
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith2Part() {
+        addPartsToEmails(2);
+        testAddPartWithIndex("a", "text/plain", 1, 3);
+    }
+
+    // 2.22
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void addTextPlainLenOneContentAtIndexTwoInEmptyEmailShouldFail() {
+        testAddPartWithIndex("a", "text/plain", 2, 3);
+    }
+
+    // 2.23
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void addTextPlainLenOneContentAtIndexTwoInEmailWith1PartShouldFail() {
+        addPartsToEmails(1);
+        testAddPartWithIndex("a", "text/plain", 2, 3);
+    }
+
+    // 2.24
+    @Test
+    public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith2Part() {
+        addPartsToEmails(2);
+        testAddPartWithIndex("a", "text/plain", 2, 3);
     }
 }
