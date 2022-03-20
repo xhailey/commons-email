@@ -79,9 +79,13 @@ public class MultiPartEmailAddPartTest {
 
     // 2.5
     @Test
-    public void canAddTextPlainLenOneContentAtIndexThreeInEmailWith3Part() {
+    public void canAddTextPlainLenOneContentAtIndexThreeInEmailWith3Part() throws EmailException, MessagingException, IOException {
         addPartsToEmails(3, email);
-        testAddPartWithIndex("a", "text/plain", 3, 4);
+        email.addPart("a", "text/plain");
+        assertEquals(4, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(3).getContent();
+        assertEquals("a", addedContent);
     }
 
     // 2.6
@@ -200,8 +204,12 @@ public class MultiPartEmailAddPartTest {
 
     // 2.16
     @Test
-    public void canAddTextPlainLenOneContentAtIndexZeroInEmptyEmail() {
-        testAddPartWithIndex("a", "text/plain", 0, 1);
+    public void canAddTextPlainLenOneContentAtIndexZeroInEmptyEmail() throws MessagingException, IOException, EmailException {
+        email.addPart("a", "text/plain");
+        assertEquals(1, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(0).getContent();
+        assertEquals("a", addedContent);
     }
 
     // 2.17
@@ -226,9 +234,13 @@ public class MultiPartEmailAddPartTest {
 
     // 2.20
     @Test
-    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith1Part() {
+    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith1Part() throws EmailException, MessagingException, IOException {
         addPartsToEmails(1, email);
-        testAddPartWithIndex("a", "text/plain", 1, 2);
+        email.addPart("a", "text/plain");
+        assertEquals(2, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(1).getContent();
+        assertEquals("a", addedContent);
     }
 
     // 2.21
@@ -253,8 +265,13 @@ public class MultiPartEmailAddPartTest {
 
     // 2.24
     @Test
-    public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith2Part() {
+    public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith2Part() throws EmailException, MessagingException, IOException {
         addPartsToEmails(2, email);
-        testAddPartWithIndex("a", "text/plain", 2, 3);
+
+        email.addPart("a", "text/plain");
+        assertEquals(3, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(2).getContent();
+        assertEquals("a", addedContent);
     }
 }
