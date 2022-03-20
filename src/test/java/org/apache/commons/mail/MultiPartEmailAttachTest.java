@@ -14,6 +14,8 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import static org.apache.commons.mail.util.TestUtils.addPartsToEmails;
+
 public class MultiPartEmailAttachTest {
     MultiPartEmail email;
 
@@ -22,16 +24,6 @@ public class MultiPartEmailAttachTest {
     @Before
     public void setupEmail() {
         email = new MultiPartEmail();
-    }
-
-    private void addPartsToEmails(int numOfParts) {
-        for (int i = 0; i < numOfParts; i++) {
-            try {
-                email.addPart("To be, or not to be, that is the question", "text/plain");
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     //1.1
@@ -205,7 +197,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validFileAttachmentCanBeAttachedToAnEmailWithOnePartAtTheEnd() {
         try {
-            addPartsToEmails(1);
+            addPartsToEmails(1, email);
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "attachment");
             assertEquals(2, email.getContainer().getCount());
@@ -219,7 +211,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validUrlAttachmentAttachedCanBeAttachedToAnEmailWithOnePartAtTheEnd() {
         try {
-            addPartsToEmails(1);
+            addPartsToEmails(1, email);
             email.attach(new URL("https://raft.github.io/raft.pdf"), "Test Attachment", "Test Attachment Desc", "attachment");
             assertEquals(2, email.getContainer().getCount());
         } catch (IOException | EmailException | MessagingException e) {
@@ -232,7 +224,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validFileAttachmentCanBeAttachedToAnEmailWithOnePartInline() {
         try {
-            addPartsToEmails(1);
+            addPartsToEmails(1, email);
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
             assertEquals(2, email.getContainer().getCount());
@@ -246,7 +238,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validUrlAttachmentAttachedCanBeAttachedToAnEmailWithOnePartInline() {
         try {
-            addPartsToEmails(1);
+            addPartsToEmails(1, email);
             email.attach(new URL("https://raft.github.io/raft.pdf"), "Test Attachment", "Test Attachment Desc", "inline");
             assertEquals(2, email.getContainer().getCount());
         } catch (IOException | EmailException | MessagingException e) {
@@ -259,7 +251,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validFileAttachmentCanBeAttachedToAnEmailWithTwoPartAtTheEnd() {
         try {
-            addPartsToEmails(2);
+            addPartsToEmails(2, email);
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "attachment");
             assertEquals(3, email.getContainer().getCount());
@@ -273,7 +265,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validUrlAttachmentAttachedCanBeAttachedToAnEmailWithTwoPartAtTheEnd() {
         try {
-            addPartsToEmails(2);
+            addPartsToEmails(2, email);
             email.attach(new URL("https://raft.github.io/raft.pdf"), "Test Attachment", "Test Attachment Desc", "attachment");
             assertEquals(3, email.getContainer().getCount());
         } catch (IOException | EmailException | MessagingException e) {
@@ -286,7 +278,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validFileAttachmentCanBeAttachedToAnEmailWithTwoPartInline() {
         try {
-            addPartsToEmails(2);
+            addPartsToEmails(2, email);
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
             assertEquals(3, email.getContainer().getCount());
@@ -300,7 +292,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validUrlAttachmentCanBeAttachedToEmailWith2PartInline() {
         try {
-            addPartsToEmails(2);
+            addPartsToEmails(2, email);
             email.attach(new URL("https://raft.github.io/raft.pdf"), "Test Attachment", "Test Attachment Desc", "inline");
             assertEquals(3, email.getContainer().getCount());
         } catch (IOException | EmailException | MessagingException e) {
@@ -313,7 +305,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validFileAttachmentCanBeAttachedToEmailWith3PartInAttachment() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "attachment");
             assertEquals(4, email.getContainer().getCount());
@@ -327,7 +319,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validUrlAttachmentCanBeAttachedToEmailWith3PartInAttachment() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             email.attach(new URL("https://raft.github.io/raft.pdf"), "Test Attachment", "Test Attachment Desc", "attachment");
             assertEquals(4, email.getContainer().getCount());
         } catch (IOException | EmailException | MessagingException e) {
@@ -340,7 +332,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validFileAttachmentCanBeAttachedToEmailWith3PartInline() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
             assertEquals(4, email.getContainer().getCount());
@@ -354,7 +346,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validUrlAttachmentCanBeAttachedToEmailWith3PartInline() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             email.attach(new URL("https://raft.github.io/raft.pdf"), "Test Attachment", "Test Attachment Desc", "inline");
             assertEquals(4, email.getContainer().getCount());
         } catch (IOException | EmailException | MessagingException e) {
@@ -392,7 +384,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validEmailAttachmentCanBeAttachedToEmailWith1PartInAttachment() {
         try {
-            addPartsToEmails(1);
+            addPartsToEmails(1, email);
             EmailAttachment attachment;
             attachment = new EmailAttachment();
             attachment.setName("Test Attachment");
@@ -418,7 +410,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validEmailAttachmentCanBeAttachedToEmailWith1PartInline() {
         try {
-            addPartsToEmails(1);
+            addPartsToEmails(1, email);
             EmailAttachment attachment;
             attachment = new EmailAttachment();
             attachment.setName("Test Attachment");
@@ -444,7 +436,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validEmailAttachmentCanBeAttachedToEmailWith2PartInAttachment() {
         try {
-            addPartsToEmails(2);
+            addPartsToEmails(2, email);
             EmailAttachment attachment;
             attachment = new EmailAttachment();
             attachment.setName("Test Attachment");
@@ -470,7 +462,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validEmailAttachmentCanBeAttachedToEmailWith2PartInline() {
         try {
-            addPartsToEmails(2);
+            addPartsToEmails(2, email);
             EmailAttachment attachment;
             attachment = new EmailAttachment();
             attachment.setName("Test Attachment");
@@ -496,7 +488,7 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validEmailAttachmentCanBeAttachedToEmailWith3PartInAttachment() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             EmailAttachment attachment;
             attachment = new EmailAttachment();
             attachment.setName("Test Attachment");
@@ -521,7 +513,7 @@ public class MultiPartEmailAttachTest {
     // 1.30
     @Test
     public void validEmailAttachmentCanBeAttachedToEmailWith3PartInline() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         final File f;
         try {
             f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
