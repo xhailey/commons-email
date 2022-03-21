@@ -40,27 +40,23 @@ public class MultiPartEmailAttachTest {
     }
 
     //1.2
-    @Test(expected = MessagingException.class)
-    public void validFileAttachmentAttachedToEmptyEmailAtRandomDispositionShouldFail() {
+    @Test(expected = EmailException.class)
+    public void validFileAttachmentAttachedToEmptyEmailAtRandomDispositionShouldFail() throws EmailException{
         try {
             final File f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
             email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "middle");
-        } catch (IOException | EmailException e) {
+        } catch (IOException e) {
             fail("Should not fail");
             e.printStackTrace();
         }
     }
 
     //1.3
-    @Test(expected = UnsupportedEncodingException.class)
-    public void invalidFileAttachmentAttachedToEmptyEmailInlineShouldFail() {
-        try {
-            final File f = File.createTempFile("xxx", ".txt");
-            email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
-        } catch (IOException | EmailException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+    @Test(expected = EmailException.class)
+    public void invalidFileAttachmentAttachedToEmptyEmailInlineShouldFail() throws EmailException {
+        final File f = new File("xxx.txt");
+        email.attach(f);
+        email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
     }
 
     //1.4
@@ -76,7 +72,7 @@ public class MultiPartEmailAttachTest {
     }
 
     //1.5
-    @Test(expected = MessagingException.class)
+    @Test(expected = EmailException.class)
     public void validUrlAttachmentAttachedAttachedToEmptyEmailAtRandomDispositionShouldFail() {
         try {
             email.attach(new URL("https://www.google.com"), "Test Attachment", "Test Attachment Desc", "middle");
@@ -99,73 +95,40 @@ public class MultiPartEmailAttachTest {
 
     //1.7
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmptyEmailInline() {
-        try {
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
-
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "inline");
-
-            assertEquals(1, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+    public void validEmailAttachmentCanBeAttachedToEmptyEmailInline() throws EmailException, MessagingException {
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("inline");
+        this.email.attach(attachment);
+        assertEquals(1, email.getContainer().getCount());
     }
 
     //1.8
-    @Test(expected = MessagingException.class)
-    public void validEmailAttachmentAttachedToEmptyEmailAtRandomDispositionShouldFail() {
-        try {
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
-
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "middle");
-        } catch (EmailException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+    @Test(expected = EmailException.class)
+    public void validEmailAttachmentAttachedToEmptyEmailAtRandomDispositionShouldFail() throws EmailException {
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("middle");
+        this.email.attach(attachment);
     }
 
     //1.9
-    @Test(expected = UnsupportedEncodingException.class)
-    public void invalidEmailAttachmentAttachedToEmptyEmailInlineShouldFail() {
-        try {
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath("xxx.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    @Test(expected = EmailException.class)
+    public void invalidEmailAttachmentAttachedToEmptyEmailInlineShouldFail() throws EmailException {
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath("xxx.txt");
+        attachment.setDisposition("inline");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "inline");
-        } catch (EmailException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
     }
 
     //1.10
@@ -357,171 +320,106 @@ public class MultiPartEmailAttachTest {
 
     //1.24
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmptyEmailInAttachment() {
-        try {
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    public void validEmailAttachmentCanBeAttachedToEmptyEmailInAttachment() throws EmailException, MessagingException {
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("attachment");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "attachment");
-
-            assertEquals(1, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
+        assertEquals(1, email.getContainer().getCount());
     }
 
     //1.25
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmailWith1PartInAttachment() {
-        try {
-            addPartsToEmails(1, email);
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    public void validEmailAttachmentCanBeAttachedToEmailWith1PartInAttachment() throws EmailException, MessagingException {
+        addPartsToEmails(1, email);
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("attachment");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "attachment");
-
-            assertEquals(2, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
+        assertEquals(2, email.getContainer().getCount());
     }
 
     //1.26
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmailWith1PartInline() {
-        try {
-            addPartsToEmails(1, email);
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    public void validEmailAttachmentCanBeAttachedToEmailWith1PartInline() throws EmailException, MessagingException {
+        addPartsToEmails(1, email);
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("inline");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "inline");
-
-            assertEquals(2, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
+        assertEquals(2, email.getContainer().getCount());
     }
 
     //1.27
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmailWith2PartInAttachment() {
-        try {
-            addPartsToEmails(2, email);
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    public void validEmailAttachmentCanBeAttachedToEmailWith2PartInAttachment() throws EmailException, MessagingException {
+        addPartsToEmails(2, email);
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("attachment");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "attachment");
-
-            assertEquals(3, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
+        assertEquals(3, email.getContainer().getCount());
     }
 
     //1.28
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmailWith2PartInline() {
-        try {
-            addPartsToEmails(2, email);
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    public void validEmailAttachmentCanBeAttachedToEmailWith2PartInline() throws EmailException, MessagingException {
+        addPartsToEmails(2, email);
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("inline");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "inline");
-
-            assertEquals(3, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
+        assertEquals(3, email.getContainer().getCount());
     }
 
     //1.29
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmailWith3PartInAttachment() {
-        try {
-            addPartsToEmails(3, email);
-            EmailAttachment attachment;
-            attachment = new EmailAttachment();
-            attachment.setName("Test Attachment");
-            attachment.setDescription("Test Attachment Desc");
-            attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
-            String fileName = attachment.getPath();
-            File file = new File(fileName);
+    public void validEmailAttachmentCanBeAttachedToEmailWith3PartInAttachment() throws EmailException, MessagingException {
+        addPartsToEmails(3, email);
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("attachment");
 
-            this.email.attach(
-                    new FileDataSource(file),
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    "attachment");
-
-            assertEquals(4, email.getContainer().getCount());
-        } catch (EmailException | MessagingException e) {
-            fail("Should not fail");
-            e.printStackTrace();
-        }
+        this.email.attach(attachment);
+        assertEquals(4, email.getContainer().getCount());
     }
 
     // 1.30
     @Test
-    public void validEmailAttachmentCanBeAttachedToEmailWith3PartInline() {
+    public void validEmailAttachmentCanBeAttachedToEmailWith3PartInline() throws EmailException, MessagingException {
         addPartsToEmails(3, email);
-        final File f;
-        try {
-            f = File.createTempFile(TEST_RESOURCE_PATH  + "testfile", ".txt");
-            email.attach(new FileDataSource(f), "Test Attachment", "Test Attachment Desc", "inline");
-            assertEquals(4, email.getContainer().getCount());
-        } catch (IOException | EmailException | MessagingException e) {
-            e.printStackTrace();
-        }
+        EmailAttachment attachment;
+        attachment = new EmailAttachment();
+        attachment.setName("Test Attachment");
+        attachment.setDescription("Test Attachment Desc");
+        attachment.setPath(TEST_RESOURCE_PATH  + "testfile.txt");
+        attachment.setDisposition("inline");
+
+        this.email.attach(attachment);
+        assertEquals(4, email.getContainer().getCount());
 
     }
 }

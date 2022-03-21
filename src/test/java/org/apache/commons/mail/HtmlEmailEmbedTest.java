@@ -146,7 +146,7 @@ public class HtmlEmailEmbedTest {
         assertEquals(4, email.getContainer().getCount());
     }
 
-    // 3.20
+    // 3.15
     @Test
     public void canEmbedvalidFileWithEmptyCIDIntoEmailWith3Part() throws EmailException, MessagingException {
         addPartsToEmails(3, email);
@@ -157,7 +157,7 @@ public class HtmlEmailEmbedTest {
         assertEquals(4, email.getContainer().getCount());
     }
 
-    // 3.21
+    // 3.16
     @Test
     public void canEmbedvalidFileWithLenTwoCIDIntoEmailWith3Part() throws EmailException, MessagingException {
         addPartsToEmails(3, email);
@@ -168,7 +168,7 @@ public class HtmlEmailEmbedTest {
         assertEquals(4, email.getContainer().getCount());
     }
 
-    // 3.22
+    // 3.17
     @Test
     public void canEmbedvalidFileWithMedLenCIDIntoEmailWith3Part() throws EmailException, MessagingException {
         addPartsToEmails(3, email);
@@ -179,7 +179,7 @@ public class HtmlEmailEmbedTest {
         assertEquals(4, email.getContainer().getCount());
     }
 
-    // 3.23
+    // 3.18
     @Test
     public void canEmbedvalidFileWithVeryLongCIDIntoEmailWith3Part() throws EmailException, MessagingException {
         addPartsToEmails(3, email);
@@ -194,7 +194,7 @@ public class HtmlEmailEmbedTest {
         assertEquals(4, email.getContainer().getCount());
     }
 
-    // 3.24
+    // 3.19
     @Test(expected = EmailException.class)
     public void embedNonExistingFileWithLenOneCIDIntoEmailWith3PartShouldFail() throws IOException, EmailException, MessagingException {
         addPartsToEmails(3, email);
@@ -205,19 +205,7 @@ public class HtmlEmailEmbedTest {
         assertEquals(4, email.getContainer().getCount());
     }
 
-    // 3.25
-    @Test
-    public void embedNonReadableFileWithLenOneCIDIntoEmailWith3PartShouldFail() throws EmailException, MessagingException {
-        addPartsToEmails(3, email);
-
-        final File f = new File(TEST_RESOURCE_PATH  + "testfile.txt");
-        f.setReadable(false);
-        email.embed(f, "A");
-        email.buildMimeMessage();
-        assertEquals(4, email.getContainer().getCount());
-    }
-
-    // 3.26
+    // 3.20
     @Test(expected = EmailException.class)
     public void embedInvalidFileWithLenOneCIDIntoEmailWith3PartShouldFail() throws EmailException {
         addPartsToEmails(3, email);
@@ -233,7 +221,7 @@ public class HtmlEmailEmbedTest {
         }
     }
 
-    // 3.27
+    // 3.21
     @Test
     public void canEmbedvalidFileWithLenOneCIDIntoEmptyEmail() {
         try {
@@ -247,7 +235,7 @@ public class HtmlEmailEmbedTest {
         }
     }
 
-    // 3.28
+    // 3.22
     @Test
     public void canEmbedvalidFileWithLenOneCIDIntoEmailWith1Part() {
         addPartsToEmails(1, email);
@@ -262,7 +250,7 @@ public class HtmlEmailEmbedTest {
         }
     }
 
-    // 3.29
+    // 3.23
     @Test
     public void canEmbedvalidFileWithLenOneCIDIntoEmptyWith2Part() {
         addPartsToEmails(2, email);
