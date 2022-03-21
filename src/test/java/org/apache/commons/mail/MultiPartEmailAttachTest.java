@@ -21,6 +21,48 @@ public class MultiPartEmailAttachTest {
 
     final String TEST_RESOURCE_PATH = "./src/test/resources/t2resource/";
 
+    private void testAttachValidFile(File file, int emailSize) throws EmailException, MessagingException {
+        addPartsToEmails(emailSize, email);
+        email.attach(file);
+
+        assertEquals(emailSize+1, email.getContainer().getCount());
+    }
+
+    private void testAttachValidEmailAttachmentFile(String filePath, String name, String description, String disposition, int emailSize) throws EmailException, MessagingException {
+        addPartsToEmails(emailSize, email);
+
+        EmailAttachment attachment = new EmailAttachment();
+        attachment.setName(name);
+        attachment.setDescription(description);
+        attachment.setPath(filePath);
+        attachment.setDisposition(disposition);
+        this.email.attach(attachment);
+
+        assertEquals(emailSize+1, email.getContainer().getCount());
+    }
+
+    private void testAttachValidEmailAttachmentUrl(String url, String name, String description, String disposition, int emailSize) throws EmailException, MessagingException, MalformedURLException {
+        addPartsToEmails(emailSize, email);
+
+        EmailAttachment attachment = new EmailAttachment();
+        attachment.setName(name);
+        attachment.setDescription(description);
+        attachment.setDisposition(disposition);
+        attachment.setURL(new URL(url));
+        this.email.attach(attachment);
+
+        assertEquals(emailSize + 1, email.getContainer().getCount());
+    }
+
+    private void testAttachValidUrl(String url, String name, String description, String disposition, int emailSize) throws EmailException, MessagingException, MalformedURLException {
+        addPartsToEmails(emailSize, email);
+
+        this.email.attach(new URL(url), name, description, disposition);
+
+        assertEquals(emailSize + 1, email.getContainer().getCount());
+    }
+
+
     @Before
     public void setupEmail() {
         email = new MultiPartEmail();
