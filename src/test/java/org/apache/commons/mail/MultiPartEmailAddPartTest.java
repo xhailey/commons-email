@@ -50,17 +50,13 @@ public class MultiPartEmailAddPartTest {
 
     // 2.2
     @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void addTextPlainLenOneContentAtIndexMinusOneInEmailWith3PartShouldFail() throws MessagingException {
+    public void addTextPlainLenOneContentAtIndexMinusOneInEmailWith3PartShouldFail() throws MessagingException, EmailException {
         addPartsToEmails(3, email);
         MimeMultipart m = new MimeMultipart("subtype/123");
         MimeBodyPart plainTextPart = new MimeBodyPart();
         plainTextPart.setContent("a", "text/plain");
         m.addBodyPart(plainTextPart);
-        try {
-            email.addPart(m, -1);
-        } catch (EmailException e) {
-            e.printStackTrace();
-        }
+        email.addPart(m, -1);
     }
 
     // 2.3
