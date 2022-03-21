@@ -21,6 +21,9 @@ public class MultiPartEmailAttachTest {
 
     final String TEST_RESOURCE_PATH = "./src/test/resources/t2resource/";
 
+    final String VALID_URL = "https://raft.github.io/raft.pdf";
+
+    final String INVALID_URL = "https://xxxxxxxxx.xx";
 
     private void testAttachValidFile(File file, int emailSize) throws EmailException, MessagingException {
         addPartsToEmails(emailSize, email);
@@ -67,6 +70,224 @@ public class MultiPartEmailAttachTest {
     @Before
     public void setupEmail() {
         email = new MultiPartEmail();
+    }
+
+    //1.1
+    @Test
+    public void canAttachExistingFileWith3PartEmail() throws MessagingException, EmailException {
+        testAttachValidFile(new File(TEST_RESOURCE_PATH  + "testfile.txt"), 3);
+    }
+
+    //1.2
+    @Test(expected = EmailException.class)
+    public void attachNonExistingFileWith3PartEmailShouldFail() throws EmailException, MessagingException {
+        testAttachValidFile(new File("testfile.txt"), 3);
+    }
+
+    //1.3
+    @Test(expected = NullPointerException.class)
+    public void attachNullFileWith3PartEmailShouldFail() throws EmailException, MessagingException {
+        final File f = null;
+        testAttachValidFile(f, 3);
+    }
+
+    //1.4
+    @Test
+    public void canAttachExistingFileWithEmptyEmail() throws MessagingException, EmailException {
+        testAttachValidFile(new File(TEST_RESOURCE_PATH  + "testfile.txt"), 0);
+    }
+
+    //1.5
+    @Test
+    public void canAttachExistingFileWithOneEmail() throws MessagingException, EmailException {
+        testAttachValidFile(new File(TEST_RESOURCE_PATH  + "testfile.txt"), 1);
+    }
+
+    //1.6
+    @Test
+    public void canAttachExistingFileWithTwoEmail() throws EmailException, MessagingException {
+        testAttachValidFile(new File(TEST_RESOURCE_PATH  + "testfile.txt"), 2);
+    }
+
+    //1.7
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndMidLenNameAndMidLenDescAnd3PartEmail() throws EmailException, MessagingException, MalformedURLException {
+        testAttachValidEmailAttachmentUrl(VALID_URL, "To be, or not to be, that is the question",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.8
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndMidLenNameAndMidLenDescAnd3PartEmail() throws EmailException, MessagingException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt", "To be, or not to be, that is the question",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.9
+    @Test(expected = EmailException.class)
+    public void attachNullEmailAttachmentShouldFail() throws EmailException {
+        EmailAttachment attachment = null;
+        this.email.attach(attachment);
+    }
+
+    //1.10
+    @Test(expected = EmailException.class)
+    public void canAttachEmailAttachmentWithInvalidFileShouldFail() throws MessagingException, EmailException {
+        testAttachValidEmailAttachmentFile("testfile.txt", "To be, or not to be, that is the question",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.11
+    @Test(expected = EmailException.class)
+    public void canAttachEmailAttachmentWithInvalidUrlShouldFail() throws MalformedURLException, MessagingException, EmailException {
+        testAttachValidEmailAttachmentUrl(INVALID_URL, "To be, or not to be, that is the question",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.12
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndNullNameAndMidLenDescAnd3PartEmail() throws MalformedURLException, MessagingException, EmailException {
+        testAttachValidEmailAttachmentUrl(VALID_URL, null,
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.13
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndEmptyNameAndMidLenDescAnd3PartEmail() throws MalformedURLException, MessagingException, EmailException {
+        testAttachValidEmailAttachmentUrl(VALID_URL, null,
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.14
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndLenOneNameAndMidLenDescAnd3PartEmail() throws MalformedURLException, MessagingException, EmailException {
+        testAttachValidEmailAttachmentUrl(VALID_URL, "a",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.15
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndLenTwoNameAndMidLenDescAnd3PartEmail() throws MalformedURLException, MessagingException, EmailException {
+        testAttachValidEmailAttachmentUrl(VALID_URL, "ab",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.16
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndLongLenNameAndMidLenDescAnd3PartEmail() throws MalformedURLException, MessagingException, EmailException {
+        testAttachValidEmailAttachmentUrl(VALID_URL, "To be, or not to be, that is the question:\n" +
+                        "Whether 'tis nobler in the mind to suffer\n" +
+                        "The slings and arrows of outrageous fortune,\n" +
+                        "Or to take arms against a sea of troubles\n" +
+                        "And by opposing end them. To die—to sleep\n",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.17
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndNullNameAndMidLenDescAnd3PartEmail() throws MessagingException, EmailException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                null, "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.18
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndEmptyNameAndMidLenDescAnd3PartEmail() throws MessagingException, EmailException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "", "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.19
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndLenOneNameAndMidLenDescAnd3PartEmail() throws MessagingException, EmailException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "a", "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.20
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndLen2NameAndMidLenDescAnd3PartEmail() throws MessagingException, EmailException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "ab", "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.21
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndLongLenNameAndMidLenDescAnd3PartEmail() throws MessagingException, EmailException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "To be, or not to be, that is the question:\n" +
+                        "Whether 'tis nobler in the mind to suffer\n" +
+                        "The slings and arrows of outrageous fortune,\n" +
+                        "Or to take arms against a sea of troubles\n" +
+                        "And by opposing end them. To die—to sleep\n",
+                "To be, or not to be, that is the question", "attachment", 3);
+    }
+
+    //1.22
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndMidLenNameAndNullDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentUrl(VALID_URL,
+                "To be, or not to be, that is the question", null, "attachment", 3);
+    }
+
+    //1.23
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndMidLenNameAndEmptyDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentUrl(VALID_URL,
+                "To be, or not to be, that is the question", "", "attachment", 3);
+    }
+
+    //1.24
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndMidLenNameAndLenOneDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentUrl(VALID_URL,
+                "a", "", "attachment", 3);
+    }
+
+    //1.25
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndMidLenNameAndLenTwoDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentUrl(VALID_URL,
+                "ab", "", "attachment", 3);
+    }
+
+    //1.26
+    @Test
+    public void canAttachEmailAttachmentWithValidUrlAndMidLenNameAndLongLenDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentUrl(VALID_URL,
+                "ab", "To be, or not to be, that is the question:\n" +
+                        "Whether 'tis nobler in the mind to suffer\n" +
+                        "The slings and arrows of outrageous fortune,\n" +
+                        "Or to take arms against a sea of troubles\n" +
+                        "And by opposing end them. To die—to sleep\n", "attachment", 3);
+    }
+
+    //1.27
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndMidLenNameAndNullDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "To be, or not to be, that is the question", null, "attachment", 3);
+    }
+
+    //1.28
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndMidLenNameAndEmptyDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "To be, or not to be, that is the question", "", "attachment", 3);
+    }
+
+    //1.29
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndMidLenNameAndLenOneDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "To be, or not to be, that is the question", "a", "attachment", 3);
+    }
+
+    // 1.30
+    @Test
+    public void canAttachEmailAttachmentWithValidFileAndMidLenNameAndLenTwoDescAnd3PartEmail() throws MessagingException, EmailException, MalformedURLException {
+        testAttachValidEmailAttachmentFile(TEST_RESOURCE_PATH + "testfile.txt",
+                "To be, or not to be, that is the question", "ab", "attachment", 3);
     }
 
     //1.31
@@ -152,7 +373,7 @@ public class MultiPartEmailAttachTest {
     }
 
     //1.44
-    @Test(expected = MalformedURLException.class)
+    @Test(expected = EmailException.class)
     public void invalidURLInAttachmentWithMiddleLenNameAndMiddleLenDescAttachedToEmailWithThreePartsAtTheEndShouldFail() throws MessagingException, EmailException, MalformedURLException {
         testAttachValidUrl(INVALID_URL, "To be, or not to be, that is the question", "To be, or not to be, that is the question", "attachment", 3);
     }
