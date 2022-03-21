@@ -33,35 +33,38 @@ public class Practice {
 //        }
 
 
-        try {
-            // load your HTML email template
-            String htmlEmailTemplate = ".... < img src=\"http://www.apache.org/images/feather.gif\"> ....";
+//        try {
+//            // load your HTML email template
+//            String htmlEmailTemplate = ".... < img src=\"http://www.apache.org/images/feather.gif\"> ....";
+//
+//            // define you base URL to resolve relative resource locations
+////            URL url = new URL("http://www.apache.org");
+//
+//            // create the email message
+//            HtmlEmail email = new HtmlEmail();
+////            email.setDataSourceResolver(new DataSourceUrlResolver(url));
+//            email.setHostName("mail.myserver.com");
+//
+//            email.addTo("jdoe@somewhere.org", "John Doe");
+//            email.setFrom("me@apache.org", "Me");
+//            email.setSubject("Test email with inline image");
+//
+//            // set the html message
+////            email.setHtmlMsg(htmlEmailTemplate);
+//
+//            // set the alternative message
+////            email.setTextMsg("Your email client does not support HTML messages");
+//
+//            final File tmpFile1 = File.createTempFile("abc", ".pdf");
+//
+//            // send the email
+//            email.embed("http://www.xxx.xx", "fdad");
+//        } catch (EmailException | IOException e) {
+//            e.printStackTrace();
+//        }
 
-            // define you base URL to resolve relative resource locations
-//            URL url = new URL("http://www.apache.org");
-
-            // create the email message
-            HtmlEmail email = new HtmlEmail();
-//            email.setDataSourceResolver(new DataSourceUrlResolver(url));
-            email.setHostName("mail.myserver.com");
-
-            email.addTo("jdoe@somewhere.org", "John Doe");
-            email.setFrom("me@apache.org", "Me");
-            email.setSubject("Test email with inline image");
-
-            // set the html message
-//            email.setHtmlMsg(htmlEmailTemplate);
-
-            // set the alternative message
-//            email.setTextMsg("Your email client does not support HTML messages");
-
-            final File tmpFile1 = File.createTempFile("abc", ".pdf");
-
-            // send the email
-            email.embed("http://www.xxx.xx", "fdad");
-        } catch (EmailException | IOException e) {
-            e.printStackTrace();
-        }
+        String s = null;
+        File f = new File(s);
 
 
 

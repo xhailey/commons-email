@@ -11,24 +11,14 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import static org.apache.commons.mail.util.TestUtils.addPartsToEmails;
+
 public class MultiPartEmailAddPartTest {
     MultiPartEmail email;
-
-    final String TEST_RESOURCE_PATH = "./src/test/resources/t2resource/";
 
     @Before
     public void setupEmail() {
         email = new MultiPartEmail();
-    }
-
-    private void addPartsToEmails(int numOfParts) {
-        for (int i = 0; i < numOfParts; i++) {
-            try {
-                email.addPart("To be, or not to be, that is the question", "text/plain");
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void testAddPartWithIndex(String content, String contentType, int index, int expectedSize) {
@@ -54,14 +44,14 @@ public class MultiPartEmailAddPartTest {
     // 2.1
     @Test
     public void canAddTextPlainLenOneContentAtIndexZeroInEmailWith3Part() throws MessagingException {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("a", "text/plain", 0, 4);
     }
 
     // 2.2
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void addTextPlainLenOneContentAtIndexMinusOneInEmailWith3PartShouldFail() throws MessagingException {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         MimeMultipart m = new MimeMultipart("subtype/123");
         MimeBodyPart plainTextPart = new MimeBodyPart();
         plainTextPart.setContent("a", "text/plain");
@@ -76,29 +66,33 @@ public class MultiPartEmailAddPartTest {
     // 2.3
     @Test
     public void canAddTextPlainLenOneContentAtIndexOneInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("a", "text/plain", 1, 4);
     }
 
     // 2.4
     @Test
     public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("a", "text/plain", 2, 4);
     }
 
     // 2.5
     @Test
-    public void canAddTextPlainLenOneContentAtIndexThreeInEmailWith3Part() {
-        addPartsToEmails(3);
-        testAddPartWithIndex("a", "text/plain", 3, 4);
+    public void canAddTextPlainLenOneContentAtIndexThreeInEmailWith3Part() throws EmailException, MessagingException, IOException {
+        addPartsToEmails(3, email);
+        email.addPart("a", "text/plain");
+        assertEquals(4, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(3).getContent();
+        assertEquals("a", addedContent);
     }
 
     // 2.6
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void addTextPlainLenOneContentAtIndexFiveInEmailWith3PartShouldFail() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             MimeMultipart m = new MimeMultipart("subtype/123");
             MimeBodyPart plainTextPart = new MimeBodyPart();
             plainTextPart.setContent("a", "text/plain");
@@ -113,7 +107,7 @@ public class MultiPartEmailAddPartTest {
     @Test(expected = EmailException.class)
     public void addNullLenOneContentAtIndexZeroInEmailWith3PartShouldFail() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             MimeMultipart m = new MimeMultipart("subtype/123");
             MimeBodyPart plainTextPart = new MimeBodyPart();
             plainTextPart.setContent("a", null);
@@ -128,7 +122,7 @@ public class MultiPartEmailAddPartTest {
     @Test(expected = EmailException.class)
     public void addEmptyLenOneContentAtIndexZeroInEmailWith3PartShouldFail() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             MimeMultipart m = new MimeMultipart("subtype/123");
             MimeBodyPart plainTextPart = new MimeBodyPart();
             plainTextPart.setContent("a", "");
@@ -142,7 +136,7 @@ public class MultiPartEmailAddPartTest {
     // 2.9
     @Test
     public void canAddTextHtmlLenOneContentAtIndexZeroInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("a", "text/html", 0, 4);
     }
 
@@ -150,7 +144,7 @@ public class MultiPartEmailAddPartTest {
     @Test(expected = EmailException.class)
     public void addRandomStringLenOneContentAtIndexZeroInEmailWith3PartShouldFail() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             MimeMultipart m = new MimeMultipart("subtype/123");
             MimeBodyPart plainTextPart = new MimeBodyPart();
             plainTextPart.setContent("a", "xxx");
@@ -165,7 +159,7 @@ public class MultiPartEmailAddPartTest {
     @Test(expected = EmailException.class)
     public void addTextPlainNullContentAtIndexZeroInEmailWith3PartShouldFail() {
         try {
-            addPartsToEmails(3);
+            addPartsToEmails(3, email);
             MimeMultipart m = new MimeMultipart("subtype/123");
             MimeBodyPart plainTextPart = new MimeBodyPart();
             plainTextPart.setContent(null, "text/plain");
@@ -179,28 +173,28 @@ public class MultiPartEmailAddPartTest {
     // 2.12
     @Test
     public void canAddTextPlainEmptyContentAtIndexZeroInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("", "text/plain", 0, 4);
     }
 
     // 2.13
     @Test
     public void canAddTextPlainLenTwoContentAtIndexZeroInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("ab", "text/plain", 0, 4);
     }
 
     // 2.14
     @Test
     public void canAddTextPlainMediumLenContentAtIndexZeroInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("To be, or not to be, that is the question", "text/plain", 0, 4);
     }
 
     // 2.15
     @Test
     public void canAddTextPlainVeryLongContentAtIndexZeroInEmailWith3Part() {
-        addPartsToEmails(3);
+        addPartsToEmails(3, email);
         testAddPartWithIndex("To be, or not to be, that is the question:\n" +
                 "Whether 'tis nobler in the mind to suffer\n" +
                 "The slings and arrows of outrageous fortune,\n" +
@@ -210,21 +204,25 @@ public class MultiPartEmailAddPartTest {
 
     // 2.16
     @Test
-    public void canAddTextPlainLenOneContentAtIndexZeroInEmptyEmail() {
-        testAddPartWithIndex("a", "text/plain", 0, 1);
+    public void canAddTextPlainLenOneContentAtIndexZeroInEmptyEmail() throws MessagingException, IOException, EmailException {
+        email.addPart("a", "text/plain");
+        assertEquals(1, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(0).getContent();
+        assertEquals("a", addedContent);
     }
 
     // 2.17
     @Test
     public void canAddTextPlainLenOneContentAtIndexZeroInEmailWith1Part() {
-        addPartsToEmails(1);
+        addPartsToEmails(1, email);
         testAddPartWithIndex("a", "text/plain", 0, 2);
     }
 
     // 2.18
     @Test
     public void canAddTextPlainLenOneContentAtIndexZeroInEmailWith2Part() {
-        addPartsToEmails(2);
+        addPartsToEmails(2, email);
         testAddPartWithIndex("a", "text/plain", 0, 3);
     }
 
@@ -236,15 +234,19 @@ public class MultiPartEmailAddPartTest {
 
     // 2.20
     @Test
-    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith1Part() {
-        addPartsToEmails(1);
-        testAddPartWithIndex("a", "text/plain", 1, 2);
+    public void canAddTextPlainLenOneContentAtIndexOneInEmailWith1Part() throws EmailException, MessagingException, IOException {
+        addPartsToEmails(1, email);
+        email.addPart("a", "text/plain");
+        assertEquals(2, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(1).getContent();
+        assertEquals("a", addedContent);
     }
 
     // 2.21
     @Test
     public void canAddTextPlainLenOneContentAtIndexOneInEmailWith2Part() {
-        addPartsToEmails(2);
+        addPartsToEmails(2, email);
         testAddPartWithIndex("a", "text/plain", 1, 3);
     }
 
@@ -257,14 +259,19 @@ public class MultiPartEmailAddPartTest {
     // 2.23
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void addTextPlainLenOneContentAtIndexTwoInEmailWith1PartShouldFail() {
-        addPartsToEmails(1);
+        addPartsToEmails(1, email);
         testAddPartWithIndex("a", "text/plain", 2, 3);
     }
 
     // 2.24
     @Test
-    public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith2Part() {
-        addPartsToEmails(2);
-        testAddPartWithIndex("a", "text/plain", 2, 3);
+    public void canAddTextPlainLenOneContentAtIndexTwoInEmailWith2Part() throws EmailException, MessagingException, IOException {
+        addPartsToEmails(2, email);
+
+        email.addPart("a", "text/plain");
+        assertEquals(3, email.getContainer().getCount());
+
+        String addedContent = (String) email.getContainer().getBodyPart(2).getContent();
+        assertEquals("a", addedContent);
     }
 }
