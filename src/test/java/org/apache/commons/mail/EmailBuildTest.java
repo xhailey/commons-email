@@ -4,6 +4,7 @@ import org.apache.commons.mail.mocks.MockEmailConcrete;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
@@ -56,14 +57,18 @@ public class EmailBuildTest {
 
         email.buildMimeMessage();
         MimeMessage message = email.getMimeMessage();
-//        message.setContent("", "");
+        Address[] toList = message.getRecipients(MimeMessage.RecipientType.TO);
+        Address[] ccList = message.getRecipients(MimeMessage.RecipientType.CC);
+        Address[] bccList = message.getRecipients(MimeMessage.RecipientType.BCC);
+
+
         assertEquals(EmailUtils.isEmpty(subject) ? null : subject, message.getSubject());
 //        assertEquals(EmailUtils.isEmpty(contentType) ? "text/plain" : contentType, message.getContentType());
         assertEquals(content, message.getContent());
         assertEquals(fromEmail, message.getFrom()[0].toString());
-        assertEquals(toListSize, message.getRecipients(MimeMessage.RecipientType.TO).length);
-        assertEquals(ccListSize, message.getRecipients(MimeMessage.RecipientType.CC).length);
-        assertEquals(bccListSize, message.getRecipients(MimeMessage.RecipientType.BCC).length);
+        assertEquals(toListSize, toList == null ? 0 : toList.length);
+        assertEquals(ccListSize,  ccList == null ? 0 : ccList.length);
+        assertEquals(bccListSize,  bccList == null ? 0 : bccList.length);
         assertEquals(date.getTime(), message.getSentDate().getTime());
     }
 
