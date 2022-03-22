@@ -74,6 +74,90 @@ public class EmailBuildTest {
                 "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
     }
 
+    // 4.2
+    @Test
+    public void canBuildAnEmailWithNullSubject() throws EmailException, MessagingException, IOException {
+        testBuildEmail(null, "abc", "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.3
+    @Test
+    public void canBuildAnEmailWithEmptySubject() throws EmailException, MessagingException, IOException {
+        testBuildEmail("", "abc", "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.4
+    @Test
+    public void canBuildAnEmailWithLenOneSubject() throws EmailException, MessagingException, IOException {
+        testBuildEmail("a", "abc", "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.5
+    @Test
+    public void canBuildAnEmailWithLenTwoSubject() throws EmailException, MessagingException, IOException {
+        testBuildEmail("ab", "abc", "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.6
+    @Test
+    public void canBuildAnEmailWithVeryLongSubject() throws EmailException, MessagingException, IOException {
+        testBuildEmail("To be, or not to be, that is the question:\n" +
+                        "Whether 'tis nobler in the mind to suffer\n" +
+                        "The slings and arrows of outrageous fortune,\n" +
+                        "Or to take arms against a sea of troubles\n" +
+                        "And by opposing end them. To die—to sleep,", "abc", "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.7
+    @Test
+    public void canBuildAnEmailWithIntContentObjectType() throws EmailException, MessagingException, IOException {
+        testBuildEmail("softwaretest", 1, "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+
+    // 4.8
+    @Test
+    public void canBuildAnEmailWithFloatContentObjectType() throws EmailException, MessagingException, IOException {
+        testBuildEmail("softwaretest", 1.1, "text/plain",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.9
+    @Test
+    public void canBuildAnEmailWithNullContentType() throws EmailException, MessagingException, IOException {
+        testBuildEmail("softwaretest", "abc", null,
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.10
+    @Test
+    public void canBuildAnEmailWithEmptyContentType() throws EmailException, MessagingException, IOException {
+        testBuildEmail("softwaretest", "abc", "",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.11
+    @Test
+    public void canBuildAnEmailWithTextHtmlContentType() throws EmailException, MessagingException, IOException {
+        testBuildEmail("softwaretest", "abc", "text/html",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+    // 4.11
+    @Test
+    public void canBuildAnEmailWithRandomStringContentType() throws EmailException, MessagingException, IOException {
+        testBuildEmail("softwaretest", "abc", "xxx",
+                "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 1, 1, 1);
+    }
+
+
+
     // 4.22
     @Test(expected = EmailException.class)
     public void whenFromEmailAddressIsNullShouldFail() throws EmailException, MessagingException, IOException {
