@@ -3,6 +3,7 @@ package org.apache.commons.mail;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.activation.URLDataSource;
 import javax.mail.MessagingException;
@@ -264,6 +265,87 @@ public class HtmlEmailEmbedTest {
             e.printStackTrace();
         }
     }
+
+    // 3.24
+    @Test
+    public void canEmbedExistingUrlWithExistingName() throws MalformedURLException, EmailException {
+        final URL url = new URL("https://raft.github.io/raft.pdf");
+        final String name = "abc";
+        String cid1 = email.embed(url, name);
+        String cid2 = email.embed(url, name);
+        assertEquals(cid1, cid2);
+    }
+
+    // 3.25
+    @Test(expected = EmailException.class)
+    public void embedNotExistingUrlWithExistingNameShouldFail() throws MalformedURLException, EmailException {
+        final URL url = new URL("https://raft.github.io/raft.pdf");
+        final String name = "abc";
+        email.embed(url, name);
+        email.embed(new URL("https://www.google.com"), name);
+    }
+
+    // 3.26
+    @Test
+    public void canEmbedExistingFileWithExistingName() throws EmailException {
+        final String name = "testfile.txt";
+        final File file = new File(TEST_RESOURCE_PATH  + name);
+
+        String cid1 = email.embed(file, "abc");
+        String cid2 = email.embed(file, "abc");
+        assertEquals(cid1, cid2);
+    }
+
+    // 3.27
+    @Test(expected = EmailException.class)
+    public void embedNonExistingFileWithExistingNameShouldFail() throws EmailException {
+        final String name = "testfile.txt";
+        final File file = new File(TEST_RESOURCE_PATH  + name);
+
+        email.embed(file, "abc");
+        email.embed(new File("xx/" + name), name);
+    }
+
+    // 3.28
+    @Test(expected = EmailException.class)
+    public void embedFileWithPathToDirectoryShouldFail() throws EmailException {
+        final File file = new File(TEST_RESOURCE_PATH);
+        email.embed(file, "abc");
+    }
+
+    // 3.29
+    @Test
+    public void canEmbedExistingDataSourceWithExistingName() throws EmailException, MalformedURLException {
+        final URL url = new URL("https://raft.github.io/raft.pdf");
+        final DataSource ds = new URLDataSource(url);
+
+        String cid1 = email.embed(ds, "abc");
+        String cid2 = email.embed(ds, "abc");
+        assertEquals(cid1, cid2);
+    }
+
+    // 3.30
+    @Test(expected = EmailException.class)
+    public void embedNotExistingDataSourceWithExistingName() throws EmailException, MalformedURLException {
+        final String name = "abc";
+        final URL url = new URL("https://raft.github.io/raft.pdf");
+        final DataSource ds = new URLDataSource(url);
+
+        final File file = new File(TEST_RESOURCE_PATH + "testfile.txt");
+
+        email.embed(ds, name);
+        email.embed(new FileDataSource(file), name);
+    }
+
+    // 3.31
+    @Test(expected = EmailException.class)
+    public void embedDataSourceWithEmptyNameShouldFail() throws EmailException, MalformedURLException {
+        final String name = "abc";
+        final URL url = new URL("https://raft.github.io/raft.pdf");
+        final DataSource ds = new URLDataSource(url);
+        email.embed(ds, "");
+    }
+
 }
 
 
