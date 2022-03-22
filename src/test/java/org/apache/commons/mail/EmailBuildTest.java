@@ -63,7 +63,6 @@ public class EmailBuildTest {
 
 
         assertEquals(EmailUtils.isEmpty(subject) ? null : subject, message.getSubject());
-//        assertEquals(EmailUtils.isEmpty(contentType) ? "text/plain" : contentType, message.getContentType());
         assertEquals(content, message.getContent());
         assertEquals(fromEmail, message.getFrom()[0].toString());
         assertEquals(toListSize, toList == null ? 0 : toList.length);
