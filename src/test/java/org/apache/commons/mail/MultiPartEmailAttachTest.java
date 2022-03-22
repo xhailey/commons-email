@@ -3,7 +3,9 @@ package org.apache.commons.mail;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.activation.URLDataSource;
 import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +72,32 @@ public class MultiPartEmailAttachTest {
     @Before
     public void setupEmail() {
         email = new MultiPartEmail();
+    }
+
+    //C1.1
+    @Test
+    public void canAttachAValidUrlToEmail() throws MalformedURLException, EmailException, MessagingException {
+        email.attach(new URL(VALID_URL), "a", "a");
+        assertEquals(1, email.getContainer().getCount());
+    }
+
+    //C1.2
+    @Test
+    public void canAttachAValidDataSourceToEmail() throws MalformedURLException, EmailException, MessagingException {
+        email.attach(new URLDataSource(new URL(VALID_URL)), "a", "a");
+        assertEquals(1, email.getContainer().getCount());
+    }
+
+    //C1.3
+    @Test(expected = EmailException.class)
+    public void canNotAttachNullDataSourceToEmail() throws EmailException, MessagingException {
+        email.attach((DataSource)null, "a", "a");
+    }
+
+    //C1.4
+    @Test(expected = EmailException.class)
+    public void canAttachInvalidDataSourceToEmail() throws MalformedURLException, EmailException, MessagingException {
+        email.attach(new URLDataSource(new URL(INVALID_URL)), "a", "a");
     }
 
     //1.1
