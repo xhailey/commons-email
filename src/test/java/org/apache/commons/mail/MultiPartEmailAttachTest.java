@@ -74,32 +74,6 @@ public class MultiPartEmailAttachTest {
         email = new MultiPartEmail();
     }
 
-    //C1.1
-    @Test
-    public void canAttachAValidUrlToEmail() throws MalformedURLException, EmailException, MessagingException {
-        email.attach(new URL(VALID_URL), "a", "a");
-        assertEquals(1, email.getContainer().getCount());
-    }
-
-    //C1.2
-    @Test
-    public void canAttachAValidDataSourceToEmail() throws MalformedURLException, EmailException, MessagingException {
-        email.attach(new URLDataSource(new URL(VALID_URL)), "a", "a");
-        assertEquals(1, email.getContainer().getCount());
-    }
-
-    //C1.3
-    @Test(expected = EmailException.class)
-    public void canNotAttachNullDataSourceToEmail() throws EmailException, MessagingException {
-        email.attach((DataSource)null, "a", "a");
-    }
-
-    //C1.4
-    @Test(expected = EmailException.class)
-    public void canAttachInvalidDataSourceToEmail() throws MalformedURLException, EmailException, MessagingException {
-        email.attach(new URLDataSource(new URL(INVALID_URL)), "a", "a");
-    }
-
     //1.1
     @Test
     public void canAttachExistingFileWith3PartEmail() throws MessagingException, EmailException {
@@ -502,5 +476,31 @@ public class MultiPartEmailAttachTest {
     @Test
     public void validURLInAttachmentWithMiddleLenNameAndMiddleLenDescCanBeAttachedToEmailWithTwoPartAtTheEnd() throws MessagingException, EmailException, MalformedURLException {
         testAttachValidUrl(VALID_URL, "To be, or not to be, that is the question", "To be, or not to be, that is the question", "attachment", 2);
+    }
+
+    //C1.60
+    @Test
+    public void canAttachAValidUrlToEmail() throws MalformedURLException, EmailException, MessagingException {
+        email.attach(new URL(VALID_URL), "a", "a");
+        assertEquals(1, email.getContainer().getCount());
+    }
+
+    //C1.61
+    @Test
+    public void canAttachAValidDataSourceToEmail() throws MalformedURLException, EmailException, MessagingException {
+        email.attach(new URLDataSource(new URL(VALID_URL)), "a", "a");
+        assertEquals(1, email.getContainer().getCount());
+    }
+
+    //C1.62
+    @Test(expected = EmailException.class)
+    public void canNotAttachNullDataSourceToEmail() throws EmailException, MessagingException {
+        email.attach((DataSource)null, "a", "a");
+    }
+
+    //C1.63
+    @Test(expected = EmailException.class)
+    public void canAttachInvalidDataSourceToEmail() throws MalformedURLException, EmailException, MessagingException {
+        email.attach(new URLDataSource(new URL(INVALID_URL)), "a", "a");
     }
 }
