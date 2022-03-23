@@ -131,7 +131,7 @@ public class HtmlEmail extends MultiPartEmail
         }
 
         this.text = aText;
-        return new HtmlEmail();
+        return this;
     }
 
     /**
@@ -180,14 +180,14 @@ public class HtmlEmail extends MultiPartEmail
         setTextMsg(msg);
 
         final StringBuffer htmlMsgBuf = new StringBuffer(
-            msg.length()
-            + HTML_MESSAGE_START.length()
-            + HTML_MESSAGE_END.length()
+                msg.length()
+                        + HTML_MESSAGE_START.length()
+                        + HTML_MESSAGE_END.length()
         );
 
         htmlMsgBuf.append(HTML_MESSAGE_START)
-            .append(msg)
-            .append(HTML_MESSAGE_END);
+                .append(msg)
+                .append(HTML_MESSAGE_END);
 
         setHtmlMsg(htmlMsgBuf.toString());
 
@@ -274,8 +274,8 @@ public class HtmlEmail extends MultiPartEmail
                 return ii.getCid();
             }
             throw new EmailException("embedded name '" + name
-                + "' is already bound to URL " + urlDataSource.getURL()
-                + "; existing names cannot be rebound");
+                    + "' is already bound to URL " + urlDataSource.getURL()
+                    + "; existing names cannot be rebound");
         }
 
         // verify that the URL is valid
@@ -390,8 +390,8 @@ public class HtmlEmail extends MultiPartEmail
                 return ii.getCid();
             }
             throw new EmailException("embedded name '" + file.getName()
-                + "' is already bound to file " + existingFilePath
-                + "; existing names cannot be rebound");
+                    + "' is already bound to file " + existingFilePath
+                    + "; existing names cannot be rebound");
         }
 
         // verify that the file is valid
@@ -437,8 +437,8 @@ public class HtmlEmail extends MultiPartEmail
                 return ii.getCid();
             }
             throw new EmailException("embedded DataSource '" + name
-                + "' is already bound to name " + ii.getDataSource().toString()
-                + "; existing names cannot be rebound");
+                    + "' is already bound to name " + ii.getDataSource().toString()
+                    + "; existing names cannot be rebound");
         }
 
         final String cid = EmailUtils.randomAlphabetic(HtmlEmail.CID_LENGTH).toLowerCase();
@@ -458,7 +458,7 @@ public class HtmlEmail extends MultiPartEmail
      * @since 1.1
      */
     public String embed(final DataSource dataSource, final String name, final String cid)
-        throws EmailException
+            throws EmailException
     {
         if (EmailUtils.isEmpty(name))
         {
@@ -527,7 +527,7 @@ public class HtmlEmail extends MultiPartEmail
 
         // determine how to form multiparts of email
 
-        if (EmailUtils.isNotEmpty(this.html) || this.inlineEmbeds.isEmpty())
+        if (EmailUtils.isNotEmpty(this.html) && !this.inlineEmbeds.isEmpty())
         {
             //If HTML body and embeds are used, create a related container and add it to the root container
             bodyEmbedsContainer = new MimeMultipart("related");
@@ -560,8 +560,8 @@ public class HtmlEmail extends MultiPartEmail
             {
                 // If both HTML and TEXT bodies are provided, create an alternative
                 // container and add it to the root container
-                bodyContainer = null;
-                this.addPart(bodyContainer, -1);
+                bodyContainer = new MimeMultipart("alternative");
+                this.addPart(bodyContainer, 0);
             }
             else
             {
@@ -584,7 +584,7 @@ public class HtmlEmail extends MultiPartEmail
             //            in case setText(...) does not set the correct content type,
             //            use the setContent() method instead.
             final String contentType = msgHtml.getContentType();
-            if (contentType == null)
+            if (contentType == null || !contentType.equals(EmailConstants.TEXT_HTML))
             {
                 // apply default charset if one has been set
                 if (EmailUtils.isNotEmpty(this.charset))

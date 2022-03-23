@@ -95,9 +95,9 @@ public class MultiPartEmail extends Email
      * @since 1.0
      */
     public Email addPart(final String partContent, final String partContentType)
-        throws EmailException
+            throws EmailException
     {
-            final BodyPart bodyPart = createBodyPart();
+        final BodyPart bodyPart = createBodyPart();
         try
         {
             bodyPart.setContent(partContent, partContentType);
@@ -154,7 +154,7 @@ public class MultiPartEmail extends Email
             throw new EmailException(me);
         }
 
-        return null;
+        return this;
     }
 
     /**
@@ -195,7 +195,7 @@ public class MultiPartEmail extends Email
         {
             final BodyPart primary = getPrimaryBodyPart();
 
-            if (primary instanceof MimePart)
+            if (primary instanceof MimePart && EmailUtils.isNotEmpty(charset))
             {
                 ((MimePart) primary).setText(msg, charset);
             }
@@ -268,7 +268,7 @@ public class MultiPartEmail extends Email
      * @since 1.3
      */
     public MultiPartEmail attach(final File file)
-        throws EmailException
+            throws EmailException
     {
         final String fileName = file.getAbsolutePath();
 
@@ -281,7 +281,7 @@ public class MultiPartEmail extends Email
 
             final FileDataSource fds = new FileDataSource(file);
 
-            return attach(fds, "", null, EmailAttachment.ATTACHMENT);
+            return attach(fds, file.getName(), null, EmailAttachment.ATTACHMENT);
         }
         catch (final IOException e)
         {
@@ -299,7 +299,7 @@ public class MultiPartEmail extends Email
      * @since 1.0
      */
     public MultiPartEmail attach(final EmailAttachment attachment)
-        throws EmailException
+            throws EmailException
     {
         MultiPartEmail result = null;
 
@@ -322,11 +322,11 @@ public class MultiPartEmail extends Email
                     throw new IOException("\"" + fileName + "\" does not exist");
                 }
                 result =
-                    attach(
-                        new FileDataSource(file),
-                        attachment.getName(),
-                        attachment.getDescription(),
-                        attachment.getDisposition());
+                        attach(
+                                new FileDataSource(file),
+                                attachment.getName(),
+                                attachment.getDescription(),
+                                attachment.getDisposition());
             }
             catch (final IOException e)
             {
@@ -336,11 +336,11 @@ public class MultiPartEmail extends Email
         else
         {
             result =
-                attach(
-                    url,
-                    attachment.getName(),
-                    attachment.getDescription(),
-                    attachment.getDisposition());
+                    attach(
+                            url,
+                            attachment.getName(),
+                            attachment.getDescription(),
+                            attachment.getDisposition());
         }
 
         return result;
@@ -359,7 +359,7 @@ public class MultiPartEmail extends Email
      * @since 1.0
      */
     public MultiPartEmail attach(final URL url, final String name, final String description)
-        throws EmailException
+            throws EmailException
     {
         return attach(url, name, description, EmailAttachment.ATTACHMENT);
     }
@@ -377,24 +377,24 @@ public class MultiPartEmail extends Email
      * @since 1.0
      */
     public MultiPartEmail attach(
-        final URL url,
-        final String name,
-        final String description,
-        final String disposition)
-        throws EmailException
+            final URL url,
+            final String name,
+            final String description,
+            final String disposition)
+            throws EmailException
     {
         // verify that the URL is valid
-       try
-       {
-           final InputStream is = url.openStream();
-           is.close();
-       }
-       catch (final IOException e)
-       {
-           throw new EmailException("Invalid URL set:" + url, e);
-       }
+        try
+        {
+            final InputStream is = url.openStream();
+            is.close();
+        }
+        catch (final IOException e)
+        {
+            throw new EmailException("Invalid URL set:" + url, e);
+        }
 
-       return attach(new URLDataSource(url), name, description, disposition);
+        return attach(new URLDataSource(url), name, description, disposition);
     }
 
     /**
@@ -409,10 +409,10 @@ public class MultiPartEmail extends Email
      * @since 1.0
      */
     public MultiPartEmail attach(
-        final DataSource ds,
-        final String name,
-        final String description)
-        throws EmailException
+            final DataSource ds,
+            final String name,
+            final String description)
+            throws EmailException
     {
         // verify that the DataSource is valid
         try
@@ -450,11 +450,11 @@ public class MultiPartEmail extends Email
      * @since 1.0
      */
     public MultiPartEmail attach(
-        final DataSource ds,
-        String name,
-        final String description,
-        final String disposition)
-        throws EmailException
+            final DataSource ds,
+            String name,
+            final String description,
+            final String disposition)
+            throws EmailException
     {
         if (EmailUtils.isEmpty(name))
         {
@@ -465,6 +465,7 @@ public class MultiPartEmail extends Email
         {
             bodyPart.setDisposition(disposition);
             bodyPart.setFileName(MimeUtility.encodeText(name));
+            bodyPart.setDescription(description);
             bodyPart.setDataHandler(new DataHandler(ds));
 
             getContainer().addBodyPart(bodyPart);
@@ -476,7 +477,7 @@ public class MultiPartEmail extends Email
         }
         setBoolHasAttachments(true);
 
-        return null;
+        return this;
     }
 
     /**
