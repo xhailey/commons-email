@@ -32,6 +32,9 @@ public class MultiPartEmailAttachTest {
         email.attach(file);
 
         assertEquals(emailSize+1, email.getContainer().getCount());
+
+        int size = email.getContainer().getCount();
+        assertEquals(file.getName(), email.getContainer().getBodyPart(size-1).getFileName());
     }
 
     private void testAttachValidEmailAttachmentFile(String filePath, String name, String description, String disposition, int emailSize) throws EmailException, MessagingException {
@@ -42,9 +45,9 @@ public class MultiPartEmailAttachTest {
         attachment.setDescription(description);
         attachment.setPath(filePath);
         attachment.setDisposition(disposition);
-        this.email.attach(attachment);
+        MultiPartEmail resultEmail = this.email.attach(attachment);
 
-        assertEquals(emailSize+1, email.getContainer().getCount());
+        assertEquals(emailSize+1, resultEmail.getContainer().getCount());
     }
 
     private void testAttachValidEmailAttachmentUrl(String url, String name, String description, String disposition, int emailSize) throws EmailException, MessagingException, MalformedURLException {
@@ -55,9 +58,9 @@ public class MultiPartEmailAttachTest {
         attachment.setDescription(description);
         attachment.setDisposition(disposition);
         attachment.setURL(new URL(url));
-        this.email.attach(attachment);
+        MultiPartEmail resultEmail = this.email.attach(attachment);
 
-        assertEquals(emailSize + 1, email.getContainer().getCount());
+        assertEquals(emailSize + 1, resultEmail.getContainer().getCount());
     }
 
     private void testAttachValidUrl(String url, String name, String description, String disposition, int emailSize) throws EmailException, MessagingException, MalformedURLException {
@@ -66,6 +69,9 @@ public class MultiPartEmailAttachTest {
         this.email.attach(new URL(url), name, description, disposition);
 
         assertEquals(emailSize + 1, email.getContainer().getCount());
+
+        int size = email.getContainer().getCount();
+        assertEquals(description, email.getContainer().getBodyPart(size-1).getDescription());
     }
 
 

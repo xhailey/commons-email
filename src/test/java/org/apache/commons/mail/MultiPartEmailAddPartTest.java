@@ -28,10 +28,10 @@ public class MultiPartEmailAddPartTest {
             plainTextPart.setContent(content, contentType);
             m.addBodyPart(plainTextPart);
 
-            email.addPart(m, index);
-            assertEquals(expectedSize, email.getContainer().getCount());
+            MultiPartEmail emailResult = (MultiPartEmail) email.addPart(m, index);
+            assertEquals(expectedSize, emailResult.getContainer().getCount());
 
-            MimeMultipart c = (MimeMultipart) email.getContainer().getBodyPart(index).getContent();
+            MimeMultipart c = (MimeMultipart) emailResult.getContainer().getBodyPart(index).getContent();
             String addedContent  = (String) c.getBodyPart(0).getContent();
             assertEquals(content, addedContent);
 
