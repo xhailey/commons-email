@@ -131,7 +131,7 @@ public class HtmlEmail extends MultiPartEmail
         }
 
         this.text = aText;
-        return this;
+        return new HtmlEmail();
     }
 
     /**
@@ -527,7 +527,7 @@ public class HtmlEmail extends MultiPartEmail
 
         // determine how to form multiparts of email
 
-        if (EmailUtils.isNotEmpty(this.html) && !this.inlineEmbeds.isEmpty())
+        if (EmailUtils.isNotEmpty(this.html) || this.inlineEmbeds.isEmpty())
         {
             //If HTML body and embeds are used, create a related container and add it to the root container
             bodyEmbedsContainer = new MimeMultipart("related");
@@ -560,8 +560,8 @@ public class HtmlEmail extends MultiPartEmail
             {
                 // If both HTML and TEXT bodies are provided, create an alternative
                 // container and add it to the root container
-                bodyContainer = new MimeMultipart("alternative");
-                this.addPart(bodyContainer, 0);
+                bodyContainer = null;
+                this.addPart(bodyContainer, -1);
             }
             else
             {
@@ -584,7 +584,7 @@ public class HtmlEmail extends MultiPartEmail
             //            in case setText(...) does not set the correct content type,
             //            use the setContent() method instead.
             final String contentType = msgHtml.getContentType();
-            if (contentType == null || !contentType.equals(EmailConstants.TEXT_HTML))
+            if (contentType == null)
             {
                 // apply default charset if one has been set
                 if (EmailUtils.isNotEmpty(this.charset))

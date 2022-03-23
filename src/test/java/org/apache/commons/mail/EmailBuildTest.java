@@ -48,7 +48,10 @@ public class EmailBuildTest {
                                 int bccListSize) throws EmailException, MessagingException, IOException {
         email.setSubject(subject);
         email.setContent(content, contentType);
-        email.setFrom(fromEmail);
+
+        if (fromEmail != null) {
+            email.setFrom(fromEmail);
+        }
 
         this.addNToEmails(toListSize);
         this.addNCcEmails(ccListSize);
@@ -225,7 +228,7 @@ public class EmailBuildTest {
 
 
     // 4.22
-    @Test(expected = NullPointerException.class)
+    @Test(expected = EmailException.class)
     public void whenFromEmailAddressIsNullShouldFail() throws EmailException, MessagingException, IOException {
         testBuildEmail("softwaretest", "abc", "text/plain",
                 null, new Date(2022, 3, 21), 1, 1, 1);

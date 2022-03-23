@@ -154,7 +154,7 @@ public class MultiPartEmail extends Email
             throw new EmailException(me);
         }
 
-        return this;
+        return null;
     }
 
     /**
@@ -195,7 +195,7 @@ public class MultiPartEmail extends Email
         {
             final BodyPart primary = getPrimaryBodyPart();
 
-            if (primary instanceof MimePart && EmailUtils.isNotEmpty(charset))
+            if (primary instanceof MimePart)
             {
                 ((MimePart) primary).setText(msg, charset);
             }
@@ -281,7 +281,7 @@ public class MultiPartEmail extends Email
 
             final FileDataSource fds = new FileDataSource(file);
 
-            return attach(fds, file.getName(), null, EmailAttachment.ATTACHMENT);
+            return attach(fds, "", null, EmailAttachment.ATTACHMENT);
         }
         catch (final IOException e)
         {
@@ -465,7 +465,6 @@ public class MultiPartEmail extends Email
         {
             bodyPart.setDisposition(disposition);
             bodyPart.setFileName(MimeUtility.encodeText(name));
-            bodyPart.setDescription(description);
             bodyPart.setDataHandler(new DataHandler(ds));
 
             getContainer().addBodyPart(bodyPart);
@@ -477,7 +476,7 @@ public class MultiPartEmail extends Email
         }
         setBoolHasAttachments(true);
 
-        return this;
+        return null;
     }
 
     /**
