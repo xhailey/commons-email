@@ -4,10 +4,15 @@ import org.apache.commons.mail.mocks.MockEmailConcrete;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.activation.DataSource;
+import javax.activation.URLDataSource;
 import javax.mail.Address;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import static org.junit.Assert.*;
 
@@ -73,6 +78,8 @@ public class EmailBuildTest {
         assertEquals(bccListSize,  bccList == null ? 0 : bccList.length);
         assertEquals(date.getTime(), message.getSentDate().getTime());
     }
+
+
 
     // 4.1
     @Test
@@ -641,4 +648,67 @@ public class EmailBuildTest {
                 "bilun.zhang@west.cmu.edu", new Date(2022, 3, 21), 5, 5, 5);
     }
 
+    // 4.81
+    @Test(expected = IllegalStateException.class)
+    public void cannotBuildEmailMultipleTimes() throws EmailException, MessagingException, IOException {
+        email.setFrom("a@b.com");
+        email.addTo("c@d.com");
+        email.buildMimeMessage();
+        email.buildMimeMessage();
+    }
+
+    // 4.82
+    @Test
+    public void canBuildEmailWithNotEmptyCharset() throws EmailException, MessagingException, IOException {
+        email.setFrom("a@b.com");
+        email.addTo("c@d.com");
+        email.setSubject("softwaretest");
+        email.setCharset("UTF-8");
+        email.buildMimeMessage();
+        MimeMessage message = email.getMimeMessage();
+        assertNotNull(message);
+    }
+
+    // 4.83
+    @Test
+    public void canBuildEmailWithValidContentAndValidContentType() throws EmailException, MessagingException, IOException {
+        email.setFrom("a@b.com");
+        email.addTo("c@d.com");
+
+        MimeMultipart m = new MimeMultipart("subtype/123");
+        MimeBodyPart plainTextPart = new MimeBodyPart();
+        plainTextPart.setContent("abc", "text/plain");
+        m.addBodyPart(plainTextPart);
+        email.updateContentType("text/plain");
+
+        email.setContent(m);
+        email.buildMimeMessage();
+        MimeMessage message = email.getMimeMessage();
+        assertNotNull(message.getContent());
+        assertNotNull("text/plain", message.getContentType());
+    }
+
+    // 4.84
+    @Test
+    public void canBuildEmailWithSizeOneEmptyReplyList() throws EmailException, MessagingException, IOException {
+        email.setFrom("a@b.com");
+        email.addTo("c@d.com");
+
+        email.addReplyTo("bilun.zhang@west.cmu.edu");
+        email.buildMimeMessage();
+        MimeMessage message = email.getMimeMessage();
+        assertEquals(1, message.getReplyTo().length);
+    }
+
+    // 4.85
+    @Test
+    public void canBuildEmailWithOneHeader() throws EmailException, MessagingException, IOException {
+        email.setFrom("a@b.com");
+        email.addTo("c@d.com");
+
+        email.addHeader("abc", "def");
+        email.buildMimeMessage();
+        MimeMessage message = email.getMimeMessage();
+        assertNotNull(message.getHeader("abc"));
+    }
 }
